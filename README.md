@@ -36,9 +36,75 @@ $ HTTPDUSER=`ps axo user,comm | grep -E '[a]pache|[h]ttpd|[_]www|[w]ww-data|[n]g
 $ sudo setfacl -R -m u:"$HTTPDUSER":rwX -m u:`whoami`:rwX var
 $ sudo setfacl -dR -m u:"$HTTPDUSER":rwX -m u:`whoami`:rwX var
 ``` 
-Description | URL
---- | ---
-Liste des adhérents | http://localhost/hardis_api_prod/web/app.php/adherents
-Adhérent trouvé | http://localhost/hardis_api_prod/web/app.php/adherents/2
-Adhérent non trouvé | http://localhost/hardis_api_prod/web/app.php/adherents/99
-Page 404 | http://localhost/hardis_api_prod/web/app.php/toto
+
+Configuration Apache (VirtualHost)
+======
+
+On va rajouter un nom de domaine pour notre appli qui pointera sur localhost, lancez la commande suivante :
+```bash
+$ gksudo gedit /etc/hosts
+``` 
+Et rajoutez cette ligne dans le fichier puis sauvergardez :
+```txt
+127.0.0.1   hardis-api.com
+``` 
+
+Rendez vous de le repertoire **/etc/apache2/sites-available/**, créez un fichier hardis.api.conf et rajoutez le contenu suivant dedans puis sauvegardez le fichier:
+
+```
+<VirtualHost *:80>
+    ServerName hardis-api.com
+    ServerAlias hardis-api.com
+
+    DocumentRoot /var/www/html/hardis_api_prod/web/
+    DirectoryIndex /var/www/html/hardis_api_prod/web/app.php/
+
+	<Directory />
+	  Order Deny,Allow
+	  Deny from all
+	  Options None
+	  AllowOverride None
+	</Directory>
+    <Directory /var/www/html/hardis_api_prod/web>
+	  Order Allow,Deny
+	  Allow from all
+
+		 <IfModule mod_rewrite.c>
+	            Options -MultiViews
+	            RewriteEngine On
+	            RewriteCond %{REQUEST_FILENAME} !-f
+	            RewriteRule ^(.*)$ app.php [QSA,L]
+	        </IfModule>
+    </Directory>
+
+
+    <Directory /var/www/html/hardis_api_prod/web/bundles>
+        <IfModule mod_rewrite.c>
+            RewriteEngine Off
+        </IfModule>
+    </Directory>
+
+    ErrorLog /var/log/apache2/project_error.log
+    CustomLog /var/log/apache2/project_access.log combined
+</VirtualHost>
+``` 
+Ensuite exécutez les commandes suivantes :
+``` bash
+# On active le virtualhost
+$ sudo a2ensite hardis-api.conf
+# Active le module d'URL rewriting s'il est installé
+$ sudo a2enmod rewrite
+# On rédémarre Apache pour prendre en compte la nouvelle configuration
+$ sudo /etc/init.d/apache2 restart
+``` 
+L'application est maintenant accessible à l'adresse http://hardis-api.com/ (Vous devriez avoir une page d'erreur 404 car la route ne corresponds à aucune action)
+Si mod_rewrite est installé est activé dans Apache, utilisez les URLs de la dernière colonne du tableau.
+Si mod_rewrite n'est pas installé ou n'est pas activé, utilisez les URLs de la 3ème colonne du tableau.
+Enfin que vous ayez effectué la configuration des virtualhosts ou non, les URLs de la 2ème colonne reste accessibles également.
+
+Description | URL sans configuration Apache | URL avec configuration Apache | URL configuration Apache + mod_rewrite
+--- | --- | --- | ---
+Liste des adhérents | http://localhost/hardis_api_prod/web/app.php/adherents | http://hardis-api.com/app.php/adherents | http://hardis-api.com/adherents
+Adhérent trouvé | http://localhost/hardis_api_prod/web/app.php/adherents/2  | http://hardis-api.com/app.php/adherents/2 | http://hardis-api.com/adherents/2
+Adhérent non trouvé | http://localhost/hardis_api_prod/web/app.php/adherents/99 | http://hardis-api.com/app.php/adherents/99 | http://hardis-api.com/adherents/99
+Page 404 | http://localhost/hardis_api_prod/web/app.php/toto | http://hardis-api.com/app.php/toto | http://hardis-api.com/toto
