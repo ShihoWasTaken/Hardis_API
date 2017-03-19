@@ -24,10 +24,6 @@ $ export SYMFONY_ENV=prod
 # Laissez les paramètres par défaut en appuyant sur entrée quand ils sont demandés
 $ composer install --no-dev --optimize-autoloader
 
-# On définit le bon chmod pour les fichiers
-$ find . -type d -exec chmod 0755 {} \;
-$ find . -type f -exec chmod 0644 {} \;
-
 # On bouge le repertoire vers le dossier /var/www/html
 $ cd .. && sudo mv Hardis_API/ /var/www/html/hardis_api_prod/ && cd /var/www/html/hardis_api_prod/
 
