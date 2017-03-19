@@ -1,0 +1,12 @@
+parameters:
+    database_host:     127.0.0.1
+    database_port:     null
+    database_name:     null
+    database_user:     null
+    database_password: null
+    mailer_transport:  smtp
+    mailer_host:       127.0.0.1
+    mailer_user:       null
+    mailer_password:   null
+    secret:     38a3eda46901b4a05ed53cd55741b4063507a252
+    datasrc:    'data.csv'

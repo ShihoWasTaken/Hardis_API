@@ -1,0 +1,9 @@
+app_adherents:
+    path:     /adherents
+    defaults: { _controller: AppBundle:Adherent:getAll }
+    methods:  [GET]
+
+app_adherent:
+    path:     /adherents/{id}
+    defaults: { _controller: AppBundle:Adherent:getById }
+    methods:  [GET]
