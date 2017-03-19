@@ -98,9 +98,9 @@ $ sudo a2enmod rewrite
 $ sudo /etc/init.d/apache2 restart
 ``` 
 L'application est maintenant accessible à l'adresse http://hardis-api.com/ (Vous devriez avoir une page d'erreur 404 car la route ne corresponds à aucune action)
-Si mod_rewrite est installé est activé dans Apache, utilisez les URLs de la dernière colonne du tableau.
-Si mod_rewrite n'est pas installé ou n'est pas activé, utilisez les URLs de la 3ème colonne du tableau.
-Enfin que vous ayez effectué la configuration des virtualhosts ou non, les URLs de la 2ème colonne reste accessibles également.
+* Si mod_rewrite est installé est activé dans Apache, utilisez les URLs de la dernière colonne du tableau.
+* Si mod_rewrite n'est pas installé ou n'est pas activé, utilisez les URLs de la 3ème colonne du tableau.
+* Enfin que vous ayez effectué la configuration des virtualhosts ou non, les URLs de la 2ème colonne reste accessibles également.
 
 Description | URL sans configuration Apache | URL avec configuration Apache | URL configuration Apache + mod_rewrite
 --- | --- | --- | ---
